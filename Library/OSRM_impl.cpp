@@ -37,6 +37,7 @@ namespace boost { namespace interprocess { class named_mutex; } }
 #include "../plugins/distance_table.hpp"
 #include "../plugins/hello_world.hpp"
 #include "../plugins/locate.hpp"
+#include "../plugins/multi_target.hpp"
 #include "../plugins/nearest.hpp"
 #include "../plugins/timestamp.hpp"
 #include "../plugins/viaroute.hpp"
@@ -75,6 +76,8 @@ OSRM_impl::OSRM_impl(ServerPaths server_paths, const bool use_shared_memory)
     RegisterPlugin(new DistanceTablePlugin<BaseDataFacade<QueryEdge::EdgeData>>(query_data_facade));
     RegisterPlugin(new HelloWorldPlugin());
     RegisterPlugin(new LocatePlugin<BaseDataFacade<QueryEdge::EdgeData>>(query_data_facade));
+    RegisterPlugin(new MultiTargetPlugin<BaseDataFacade<QueryEdge::EdgeData>, true>(query_data_facade));
+    RegisterPlugin(new MultiTargetPlugin<BaseDataFacade<QueryEdge::EdgeData>, false>(query_data_facade));
     RegisterPlugin(new NearestPlugin<BaseDataFacade<QueryEdge::EdgeData>>(query_data_facade));
     RegisterPlugin(new TimestampPlugin<BaseDataFacade<QueryEdge::EdgeData>>(query_data_facade));
     RegisterPlugin(new ViaRoutePlugin<BaseDataFacade<QueryEdge::EdgeData>>(query_data_facade));
