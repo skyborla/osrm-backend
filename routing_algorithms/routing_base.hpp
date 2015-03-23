@@ -57,14 +57,14 @@ template <class DataFacadeT, class Derived> class BasicRoutingInterface
     BasicRoutingInterface() = delete;
     BasicRoutingInterface(const BasicRoutingInterface &) = delete;
     explicit BasicRoutingInterface(DataFacadeT *facade) : facade(facade) {}
-    ~BasicRoutingInterface() {}
 
-    void RoutingStep(SearchEngineData::QueryHeap &forward_heap,
+    bool RoutingStep(SearchEngineData::QueryHeap &forward_heap,
                      SearchEngineData::QueryHeap &reverse_heap,
                      NodeID *middle_node_id,
                      int *upper_bound,
                      const int min_edge_offset,
-                     const bool forward_direction) const
+                     const bool forward_direction,
+                     bool clear_if_finished = true) const
     {
         const NodeID node = forward_heap.DeleteMin();
         const int distance = forward_heap.GetKey(node);
@@ -91,11 +91,11 @@ template <class DataFacadeT, class Derived> class BasicRoutingInterface
             }
         }
 
-        if (distance + min_edge_offset > *upper_bound)
+        if (clear_if_finished && distance + min_edge_offset > *upper_bound)
         {
             // SimpleLogger().Write() << "min_edge_offset: " << min_edge_offset;
             forward_heap.DeleteAll();
-            return;
+            return true;
         }
 
         // Stalling
@@ -114,7 +114,7 @@ template <class DataFacadeT, class Derived> class BasicRoutingInterface
                 {
                     if (forward_heap.GetKey(to) + edge_weight < distance)
                     {
-                        return;
+                        return false;
                     }
                 }
             }
@@ -147,6 +147,8 @@ template <class DataFacadeT, class Derived> class BasicRoutingInterface
                 }
             }
         }
+
+        return false;
     }
 
     void UnpackPath(const std::vector<NodeID> &packed_path,
