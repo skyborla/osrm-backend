@@ -32,8 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "../algorithms/object_encoder.hpp"
 #include "../data_structures/search_engine.hpp"
-#include "../Util/json_renderer.hpp"
-#include "../Util/timing_util.hpp"
+#include "../util/json_renderer.hpp"
+#include "../util/timing_util.hpp"
 
 template <class DataFacadeT, bool forward> class MultiTargetPlugin final : public BasePlugin
 {
