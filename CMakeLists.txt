@@ -35,7 +35,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/third_party/libosmium/include/)
 
 add_custom_target(FingerPrintConfigure ALL
-  ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+  ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
     -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FingerPrint-Config.cmake
   COMMENT "Configuring revision fingerprint"
   VERBATIM)
