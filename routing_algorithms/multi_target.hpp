@@ -216,7 +216,7 @@ class MultiTargetRouting final : public BasicRoutingInterface<DataFacadeT, Multi
                                          : source_phantom_it->location);
 
         double distance = 0.0;
-        for (int i = 1; i < coordinates.size(); ++i)
+        for (size_t i = 1; i < coordinates.size(); ++i)
         {
             distance += coordinate_calculation::euclidean_distance(coordinates[i - 1],
                                                                    coordinates[i]);
