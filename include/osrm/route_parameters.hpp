@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ROUTE_PARAMETERS_HPP
 
 #include <osrm/coordinate.hpp>
+#include "../data_structures/phantom_node.hpp"
 
 #include <boost/fusion/container/vector/vector_fwd.hpp>
 
@@ -99,6 +100,8 @@ struct RouteParameters
     std::vector<unsigned> timestamps;
     std::vector<bool> uturns;
     std::vector<FixedPointCoordinate> coordinates;
+
+    PhantomNodeArray phantomNodes; // deserialized hints
 };
 
 #endif // ROUTE_PARAMETERS_HPP

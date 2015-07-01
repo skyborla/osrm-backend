@@ -49,41 +49,48 @@ template <class DataFacadeT, bool forward> class MultiTargetPlugin final : publi
     HandleRequest(const RouteParameters &route_parameters,
                   unsigned &calctime_in_us)
     {
-        // check number of parameters
-        if (2 > route_parameters.coordinates.size())
-        {
-            return nullptr;
-        }
+        PhantomNodeArray phantom_node_vector;
+        if(!route_parameters.phantomNodes.empty()) {
+            phantom_node_vector = std::move(route_parameters.phantomNodes);
 
-        if (std::any_of(begin(route_parameters.coordinates), end(route_parameters.coordinates),
-                        [&](FixedPointCoordinate coordinate)
-                        {
-                return !coordinate.is_valid();
-            }))
-        {
-            return nullptr;
-        }
-
-        const bool checksum_OK = (route_parameters.check_sum == facade->GetCheckSum());
-        PhantomNodeArray phantom_node_vector(route_parameters.coordinates.size());
-        for (unsigned i = 0; i < route_parameters.coordinates.size(); ++i)
-        {
-            if (checksum_OK && i < route_parameters.hints.size() &&
-                !route_parameters.hints[i].empty())
+            std::cout << phantom_node_vector.size() << std::endl;
+        } else {
+            // check number of parameters
+            if (2 > route_parameters.coordinates.size())
             {
-                PhantomNode current_phantom_node;
-                ObjectEncoder::DecodeFromBase64(route_parameters.hints[i], current_phantom_node);
-                if (current_phantom_node.is_valid(facade->GetNumberOfNodes()))
-                {
-                    phantom_node_vector[i].emplace_back(std::move(current_phantom_node));
-                    continue;
-                }
+                return nullptr;
             }
-            facade->IncrementalFindPhantomNodeForCoordinate(route_parameters.coordinates[i],
-                                                            phantom_node_vector[i],
-                                                            1);
 
-            BOOST_ASSERT(phantom_node_vector[i].front().is_valid(facade->GetNumberOfNodes()));
+            if (std::any_of(begin(route_parameters.coordinates), end(route_parameters.coordinates),
+                            [&](FixedPointCoordinate coordinate)
+                            {
+                    return !coordinate.is_valid();
+                }))
+            {
+                return nullptr;
+            }
+
+            const bool checksum_OK = (route_parameters.check_sum == facade->GetCheckSum());
+            phantom_node_vector.resize(route_parameters.coordinates.size());
+            for (unsigned i = 0; i < route_parameters.coordinates.size(); ++i)
+            {
+                if (checksum_OK && i < route_parameters.hints.size() &&
+                    !route_parameters.hints[i].empty())
+                {
+                    PhantomNode current_phantom_node;
+                    ObjectEncoder::DecodeFromBase64(route_parameters.hints[i], current_phantom_node);
+                    if (current_phantom_node.is_valid(facade->GetNumberOfNodes()))
+                    {
+                        phantom_node_vector[i].emplace_back(std::move(current_phantom_node));
+                        continue;
+                    }
+                }
+                facade->IncrementalFindPhantomNodeForCoordinate(route_parameters.coordinates[i],
+                                                                phantom_node_vector[i],
+                                                                1);
+
+                BOOST_ASSERT(phantom_node_vector[i].front().is_valid(facade->GetNumberOfNodes()));
+            }
         }
 
         std::shared_ptr<std::vector<std::pair<EdgeWeight, double>>> ret;
