@@ -52,8 +52,6 @@ template <class DataFacadeT, bool forward> class MultiTargetPlugin final : publi
         PhantomNodeArray phantom_node_vector;
         if(!route_parameters.phantomNodes.empty()) {
             phantom_node_vector = std::move(route_parameters.phantomNodes);
-
-            std::cout << phantom_node_vector.size() << std::endl;
         } else {
             // check number of parameters
             if (2 > route_parameters.coordinates.size())
